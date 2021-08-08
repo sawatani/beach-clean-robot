@@ -1,7 +1,9 @@
 import time
-from RPi import GPIO
 
-channel = 6
+import pigpio
+from lib.i2c import PCA9685
+
+channel = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(channel, GPIO.OUT)
 
@@ -16,15 +18,14 @@ try:
         except ValueError:
             dc = 2.5
 
-        #DutyCycle dc%
+        # DutyCycle dc%
         p.ChangeDutyCycle(dc)
 
-        #最大180°回転を想定し、0.3sec以上待つ
+        # 最大180°回転を想定し、0.3sec以上待つ
         time.sleep(0.4)
 
-        #回転終了したら一旦DutyCycle0%にする
+        # 回転終了したら一旦DutyCycle0%にする
         p.ChangeDutyCycle(0.0)
 finally:
-    print('Cleaning up GPIO channels')
+    print("Cleaning up GPIO channels")
     GPIO.cleanup()
-
