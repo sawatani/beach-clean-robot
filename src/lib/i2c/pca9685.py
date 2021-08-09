@@ -1,3 +1,7 @@
+"""
+Handle GPIO via PCA9685
+"""
+
 import time
 
 import pigpio
@@ -50,13 +54,13 @@ class PWM:
     _OCH = 1 << 3
     _OUTDRV = 1 << 2
 
-    def __init__(self, pi: pigpio.pi, bus=1, address=0x40):
+    def __init__(self, gpio: pigpio.pi, bus=1, address=0x40):
 
-        self.pi = pi
+        self.gpio = gpio
         self.bus = bus
         self.address = address
 
-        self.h = pi.i2c_open(bus, address)
+        self.handle = gpio.i2c_open(bus, address)
 
         self._write_reg(self._MODE1, self._AI | self._ALLCALL)
         self._write_reg(self._MODE2, self._OCH | self._OUTDRV)
@@ -107,25 +111,27 @@ class PWM:
         steps = int(round(percent * (4096.0 / 100.0)))
 
         if steps < 0:
-            on = 0
-            off = 4096
+            level_high = 0
+            level_low = 4096
         elif steps > 4095:
-            on = 4096
-            off = 0
+            level_high = 4096
+            level_low = 0
         else:
-            on = 0
-            off = steps
+            level_high = 0
+            level_low = steps
 
-        if (channel >= 0) and (channel <= 15):
-            self.pi.i2c_write_i2c_block_data(
-                self.h,
+        if 0 <= channel <= 15:
+            self.gpio.i2c_write_i2c_block_data(
+                self.handle,
                 self._LED0_ON_L + 4 * channel,
-                [on & 0xFF, on >> 8, off & 0xFF, off >> 8],
+                [level_high & 0xFF, level_high >> 8, level_low & 0xFF, level_low >> 8],
             )
 
         else:
-            self.pi.i2c_write_i2c_block_data(
-                self.h, self._ALL_LED_ON_L, [on & 0xFF, on >> 8, off & 0xFF, off >> 8]
+            self.gpio.i2c_write_i2c_block_data(
+                self.handle,
+                self._ALL_LED_ON_L,
+                [level_high & 0xFF, level_high >> 8, level_low & 0xFF, level_low >> 8],
             )
 
     def set_pulse_width(self, channel, width):
@@ -139,40 +145,10 @@ class PWM:
         "Switches all PWM channels off and releases resources."
 
         self.set_duty_cycle(-1, 0)
-        self.pi.i2c_close(self.h)
+        self.gpio.i2c_close(self.handle)
 
     def _write_reg(self, reg, byte):
-        self.pi.i2c_write_byte_data(self.h, reg, byte)
+        self.gpio.i2c_write_byte_data(self.handle, reg, byte)
 
     def _read_reg(self, reg):
-        return self.pi.i2c_read_byte_data(self.h, reg)
-
-
-if __name__ == "__main__":
-
-    import time
-
-    import pigpio
-
-    import PCA9685
-
-    pi = pigpio.pi()
-
-    if not pi.connected:
-        exit(0)
-
-    pwm = PCA9685.PWM(pi)  # defaults to bus 1, address 0x40
-
-    pwm.set_frequency(50)  # suitable for servos
-
-    for dc in range(5, 11):
-        pwm.set_duty_cycle(-1, dc)  # -1 for all channels
-        time.sleep(1)
-
-    for pw in range(1000, 2050, 50):
-        pwm.set_pulse_width(-1, pw)  # -1 for all channels
-        time.sleep(1)
-
-    pwm.cancel()
-
-    pi.stop()
+        return self.gpio.i2c_read_byte_data(self.handle, reg)
