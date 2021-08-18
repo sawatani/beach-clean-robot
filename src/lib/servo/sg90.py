@@ -102,34 +102,19 @@ class SG90by360(SG90):
 
 # サンプルコード
 if __name__ == "__main__":
-    import sys
-    import traceback
 
-    import pigpio
-
-    pi = pigpio.pi()
-    if not pi.connected:
-        print("GPIO could not start")
-        sys.exit(1)
-
-    PCA9685_PWM = None
-    try:
-        PCA9685_PWM = pca9685.PWM(pi)
-        sg90s = list(map(lambda i: SG90(PCA9685_PWM, i), range(16)))
+    def _proc(pca_pwm: pca9685.PWM):
+        sg90s = list(map(lambda i: SG90(pca_pwm, i), range(16)))
 
         while True:
             try:
                 print("channel(0-15): ", end="")
-                ch = int(input())
+                given_channel = int(input())
                 print("rate(0-100): ", end="")
-                rt = float(input()) / 100
+                given_rate = float(input()) / 100
 
-                sg90s[ch].set_pulse_rate(rt)
+                sg90s[given_channel].set_pulse_rate(given_rate)
             except ValueError:
                 print("Invalid input.")
-    finally:
-        traceback.print_exc()
-        print("Tidy up...")
-        if PCA9685_PWM:
-            PCA9685_PWM.cancel()
-        pi.stop()
+
+    pca9685.run_with(_proc)
