@@ -54,7 +54,7 @@ class SG90:
         """
         pulse_width = self.calc_pulse_width(rate)
         print(f"Setting pulse width {pulse_width}")
-        self.pwm.set_pulse_width(self.channel, pulse_width)
+        self.pwm.set_pulse_width(self.channel, pulse_width * 1000)
 
 
 class SG90by180(SG90):
