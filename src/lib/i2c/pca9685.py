@@ -2,7 +2,9 @@
 Handle GPIO via PCA9685
 """
 
+import sys
 import time
+import traceback
 
 import pigpio
 
@@ -54,7 +56,7 @@ class PWM:
     _OCH = 1 << 3
     _OUTDRV = 1 << 2
 
-    def __init__(self, gpio: pigpio.pi, bus=1, address=0x40):
+    def __init__(self, gpio: pigpio.pi, bus: int = 1, address: int = 0x40):
 
         self.gpio = gpio
         self.bus = bus
@@ -153,3 +155,24 @@ class PWM:
 
     def _read_reg(self, reg):
         return self.gpio.i2c_read_byte_data(self.handle, reg)
+
+
+def run_with(func, bus: int = 1, address: int = 0x40):
+    """
+    GPIO の接続確認から片付けまでをしてくれる。
+    """
+    gpio_pi = pigpio.pi()
+    if not gpio_pi.connected:
+        print("GPIO could not start")
+        sys.exit(1)
+
+    pca9685_pwm = None
+    try:
+        pca9685_pwm = PWM(gpio_pi, bus, address)
+        func(pca9685_pwm)
+    finally:
+        traceback.print_exc()
+        print("Tidy up...")
+        if pca9685_pwm:
+            pca9685_pwm.cancel()
+        gpio_pi.stop()
