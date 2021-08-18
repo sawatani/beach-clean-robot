@@ -2,10 +2,6 @@
 Handle servo motor SG90
 """
 
-import sys
-
-import pigpio
-
 from lib.i2c import pca9685
 
 
@@ -106,6 +102,11 @@ class SG90by360(SG90):
 
 # サンプルコード
 if __name__ == "__main__":
+    import sys
+    import traceback
+
+    import pigpio
+
     pi = pigpio.pi()
     if not pi.connected:
         print("GPIO could not start")
@@ -127,8 +128,6 @@ if __name__ == "__main__":
             except ValueError:
                 print("Invalid input.")
     finally:
-        import traceback
-
         traceback.print_exc()
         print("Tidy up...")
         if PCA9685_PWM:
