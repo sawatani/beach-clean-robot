@@ -138,6 +138,7 @@ class PWM:
 
         "Sets the pulse width for a channel.  Use -1 for all channels."
 
+        print(f"Calculating {width}/{self._pulse_width}")
         self.set_duty_cycle(channel, (float(width) / self._pulse_width) * 100.0)
 
     def cancel(self):
