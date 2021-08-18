@@ -64,7 +64,7 @@ class SG90by180(SG90):
         pulse_min: float = 0.5,
         pulse_max: float = 2.4,
     ):
-        super().__init__(self, pwm, pulse_min, pulse_max)
+        super().__init__(pwm, channel, pulse_min, pulse_max)
 
     def set_angle(self, degree: float):
         """
@@ -88,7 +88,7 @@ class SG90by360(SG90):
         pulse_min: float = 0.5,
         pulse_max: float = 2.4,
     ):
-        super().__init__(self, pwm, pulse_min, pulse_max)
+        super().__init__(pwm, channel, pulse_min, pulse_max)
 
     def move_angle(self, direction: float):
         """
