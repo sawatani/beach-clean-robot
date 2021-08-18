@@ -57,15 +57,6 @@ class SG90by180(SG90):
     SG90 with 180 degrees
     """
 
-    def __init__(
-        self,
-        pwm: pca9685.PWM,
-        channel: int,
-        pulse_min: float = 0.5,
-        pulse_max: float = 2.4,
-    ):
-        super().__init__(pwm, channel, pulse_min, pulse_max)
-
     def set_angle(self, degree: float):
         """
         Move motor to specified degree
@@ -80,15 +71,6 @@ class SG90by360(SG90):
     """
     SG90 with 360 degrees
     """
-
-    def __init__(
-        self,
-        pwm: pca9685.PWM,
-        channel: int,
-        pulse_min: float = 0.5,
-        pulse_max: float = 2.4,
-    ):
-        super().__init__(pwm, channel, pulse_min, pulse_max)
 
     def move_angle(self, direction: float):
         """
