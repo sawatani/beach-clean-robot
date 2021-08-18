@@ -3,7 +3,6 @@ Handle servo motor SG90
 """
 
 import sys
-import time
 
 import pigpio
 
@@ -106,20 +105,32 @@ class SG90by360(SG90):
 
 
 # サンプルコード
-if __name__ == "main":
+if __name__ == "__main__":
     pi = pigpio.pi()
     if not pi.connected:
         print("GPIO could not start")
         sys.exit(1)
 
+    PCA9685_PWM = None
     try:
-        p = pca9685.PWM(pi)
-        sg90 = SG90by180(p, 0)
+        PCA9685_PWM = pca9685.PWM(pi)
+        sg90s = list(map(lambda i: SG90(PCA9685_PWM, i), range(16)))
 
-        for d in range(0, 180, step=10):
-            sg90.set_angle(d)
-            time.sleep(0.5)
+        while True:
+            try:
+                print("channel(0-15): ", end="")
+                ch = int(input())
+                print("rate(0-100): ", end="")
+                rt = float(input()) / 100
 
-        p.cancel()
+                sg90s[ch].set_pulse_rate(rt)
+            except ValueError:
+                print("Invalid input.")
     finally:
+        import traceback
+
+        traceback.print_exc()
+        print("Tidy up...")
+        if PCA9685_PWM:
+            PCA9685_PWM.cancel()
         pi.stop()
