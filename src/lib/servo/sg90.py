@@ -72,7 +72,7 @@ class SG90by360(SG90):
     SG90 with 360 degrees
     """
 
-    def move_angle(self, direction: float):
+    def rotate(self, direction: float):
         """
         Move motor to specified degree
 
