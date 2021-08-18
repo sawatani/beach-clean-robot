@@ -10,11 +10,17 @@ class ShoulderJoint:
     肩関節
     """
 
-    def __init__(self, servoX: sg90.SG90by180, servoY: sg90.SG90by180):
+    def __init__(
+        self,
+        servoX: sg90.SG90by180,
+        servoY: sg90.SG90by180,
+        start_x: float = 90,
+        start_y: float = 90,
+    ):
         self.servo_x = servoX
         self.servo_y = servoY
-        self.current_angle_x = 0.0
-        self.current_angle_y = 0.0
+        self.current_angle_x = start_x
+        self.current_angle_y = start_y
 
     def __move_to(self):
         self.servo_x.set_angle(self.current_angle_x)
@@ -45,7 +51,7 @@ if __name__ == "__main__":
         sg90_x = sg90.SG90by180(pca_pwm, 0)
         sg90_y = sg90.SG90by180(pca_pwm, 1)
         shoulder = ShoulderJoint(sg90_x, sg90_y)
-        shoulder.set_angle(90, 90)
+        shoulder.move(0, 0)
 
         while True:
             try:
