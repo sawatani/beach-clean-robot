@@ -2,7 +2,7 @@
 肩関節の制御
 """
 
-from lib.servo import sg90
+from lib.servo.sg90 import SG90by180
 
 
 class ShoulderJoint:
@@ -12,8 +12,8 @@ class ShoulderJoint:
 
     def __init__(
         self,
-        servoX: sg90.SG90by180,
-        servoY: sg90.SG90by180,
+        servoX: SG90by180,
+        servoY: SG90by180,
         start_x: float = 90,
         start_y: float = 90,
     ):
@@ -45,11 +45,11 @@ class ShoulderJoint:
 
 # サンプルコード
 if __name__ == "__main__":
-    import lib.i2c.pca9685
+    from lib.i2c.pca9685 import PWM, run_with
 
-    def _proc(pca_pwm: lib.i2c.pca9685.PWM):
-        sg90_x = sg90.SG90by180(pca_pwm, 0)
-        sg90_y = sg90.SG90by180(pca_pwm, 1)
+    def _proc(pca_pwm: PWM):
+        sg90_x = SG90by180(pca_pwm, 0)
+        sg90_y = SG90by180(pca_pwm, 1)
         shoulder = ShoulderJoint(sg90_x, sg90_y)
         shoulder.move(0, 0)
 
@@ -64,4 +64,4 @@ if __name__ == "__main__":
             except ValueError:
                 print("Invalid input.")
 
-    lib.i2c.pca9685.run_with(_proc)
+    run_with(_proc)
