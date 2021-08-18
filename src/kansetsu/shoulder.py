@@ -16,7 +16,7 @@ class ShoulderJoint:
         self.current_angle_x = 0.0
         self.current_angle_y = 0.0
 
-    def _move(self):
+    def __move_to(self):
         self.servo_x.set_angle(self.current_angle_x)
         self.servo_y.set_angle(self.current_angle_y)
 
@@ -26,7 +26,7 @@ class ShoulderJoint:
         """
         self.current_angle_x = degree_x
         self.current_angle_y = degree_y
-        self._move()
+        self.__move_to()
 
     def move(self, degree_x: float, degree_y: float):
         """
@@ -34,4 +34,4 @@ class ShoulderJoint:
         """
         self.current_angle_x += degree_x
         self.current_angle_y += degree_y
-        self._move()
+        self.__move_to()
