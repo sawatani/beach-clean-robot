@@ -12,13 +12,13 @@ class ShoulderJoint:
 
     def __init__(
         self,
-        servoX: SG90by180,
-        servoY: SG90by180,
+        servo_x: SG90by180,
+        servo_y: SG90by180,
         start_x: float = 90,
         start_y: float = 90,
     ):
-        self.servo_x = servoX
-        self.servo_y = servoY
+        self.servo_x = servo_x
+        self.servo_y = servo_y
         self.current_angle_x = start_x
         self.current_angle_y = start_y
 
